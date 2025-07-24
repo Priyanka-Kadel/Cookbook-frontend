@@ -35,7 +35,7 @@ const Failure = () => {
               className="w-96 h-64 object-cover rounded-lg shadow-md"
             />
           </p>
-          <p className="text-orange-400 mt-4 text-lg font-bold">
+          <p className="text-red-400 mt-4 text-lg font-bold">
             Redirecting back to HomeScreen...
           </p>
         </div>

@@ -53,8 +53,8 @@ const Navbar = () => {
     toast.success("You have been logged out!");
   };
 
-  // Simulate authentication (replace with your actual auth logic)
-  const isLoggedIn = !!localStorage.getItem("token"); // or your auth check
+
+  const isLoggedIn = !!localStorage.getItem("token"); 
 
   return (
     <nav className="bg-white shadow-lg fixed w-full top-0 z-50">
@@ -65,7 +65,7 @@ const Navbar = () => {
             <img src={logo} alt="Cookbook Logo" className="h-14 w-auto" />
             <span className="text-xl font-bold text-[#509343]">Cookbook</span>
           </NavLink>
-
+  
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             <NavLink
@@ -100,14 +100,16 @@ const Navbar = () => {
             >
               Help
             </NavLink>
-            
-            {/* Show cart only for authenticated users */}
+          </div>
+  
+          {/* User Menu & Cart */}
+          <div className="flex items-center space-x-4">
             {user && (
               <NavLink
                 to="/cart"
                 className="text-gray-700 hover:text-[#509343] transition-colors relative"
               >
-                <FaShoppingCart className="inline mr-1" />
+                <FaShoppingCart className="inline mr-1 text-xl" />
                 {cartItemCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-[#509343] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                     {cartItemCount}
@@ -115,10 +117,7 @@ const Navbar = () => {
                 )}
               </NavLink>
             )}
-          </div>
-
-          {/* User Menu */}
-          <div className="flex items-center space-x-4">
+  
             {user ? (
               <div className="relative">
                 <button
@@ -129,12 +128,13 @@ const Navbar = () => {
                   <span>{user.name || user.email}</span>
                   <FaCaretDown />
                 </button>
-
+  
                 {isDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                     {user.role === 'admin' && (
                       <Link
                         to="/adminDash"
+                        onClick={() => setIsDropdownOpen(false)}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         <FaCrown className="inline mr-2" />
@@ -143,6 +143,7 @@ const Navbar = () => {
                     )}
                     <Link
                       to="/profile"
+                      onClick={() => setIsDropdownOpen(false)}
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       <FaUser className="inline mr-2" />
@@ -150,13 +151,17 @@ const Navbar = () => {
                     </Link>
                     <Link
                       to="/saved-recipes"
+                      onClick={() => setIsDropdownOpen(false)}
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       <FaHeart className="inline mr-2" />
                       Saved Recipes
                     </Link>
                     <button
-                      onClick={() => setShowLogoutConfirm(true)}
+                      onClick={() => {
+                        setShowLogoutConfirm(true);
+                        setIsDropdownOpen(false);
+                      }}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       <FaSignOutAlt className="inline mr-2" />
@@ -178,6 +183,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+  
       {/* Logout Confirmation Modal */}
       {showLogoutConfirm && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
@@ -202,6 +208,7 @@ const Navbar = () => {
       )}
     </nav>
   );
+  
 };
 
 export default Navbar;

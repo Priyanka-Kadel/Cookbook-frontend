@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaUpload, FaPlus, FaTrash } from "react-icons/fa";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EditRecipe = () => {
   const navigate = useNavigate();
@@ -32,6 +34,20 @@ const EditRecipe = () => {
         
         if (response.ok) {
           const recipe = await response.json();
+          // Transform steps data to handle different formats
+          const transformSteps = (stepsData) => {
+            if (!stepsData || !Array.isArray(stepsData)) return [""];
+            
+            return stepsData.map(step => {
+              if (typeof step === "string") {
+                return step;
+              } else if (step && typeof step === "object") {
+                return step.instruction || step.description || step.step || "";
+              }
+              return "";
+            }).filter(step => step.trim() !== "");
+          };
+
           setFormData({
             title: recipe.title || "",
             description: recipe.description || "",
@@ -41,15 +57,15 @@ const EditRecipe = () => {
             servings: recipe.servings || "",
             totalPrice: recipe.totalPrice || "",
             ingredients: recipe.ingredients || [{ name: "", quantity: "", unit: "" }],
-            steps: recipe.steps || [""]
+            steps: transformSteps(recipe.directions || recipe.steps)
           });
         } else {
-          alert("Recipe not found");
+          toast.error("Recipe not found");
           navigate("/recipes");
         }
       } catch (error) {
         console.error("Error fetching recipe:", error);
-        alert("Error loading recipe");
+        toast.error("Error loading recipe");
         navigate("/recipes");
       } finally {
         setIsLoading(false);
@@ -142,7 +158,7 @@ const EditRecipe = () => {
       formDataToSend.append("servings", formData.servings);
       formDataToSend.append("totalPrice", formData.totalPrice);
       formDataToSend.append("ingredients", JSON.stringify(formData.ingredients));
-      formDataToSend.append("steps", JSON.stringify(formData.steps));
+      formDataToSend.append("directions", JSON.stringify(formData.steps));
 
       // Add image if selected
       if (recipeImage) {
@@ -158,15 +174,15 @@ const EditRecipe = () => {
       });
 
       if (response.ok) {
-        alert("Recipe updated successfully!");
-        navigate(`/recipe-details/${id}`);
+        toast.success("Recipe edited successfully!");
+        navigate("/adminDash");
       } else {
         const errorData = await response.json();
-        alert(`Error: ${errorData.message || "Failed to update recipe"}`);
+        toast.error(`Error: ${errorData.message || "Failed to update recipe"}`);
       }
     } catch (error) {
       console.error("Error updating recipe:", error);
-      alert("Error updating recipe. Please try again.");
+      toast.error("Error updating recipe. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -175,7 +191,7 @@ const EditRecipe = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#509343]"></div>
       </div>
     );
   }
@@ -198,7 +214,7 @@ const EditRecipe = () => {
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent"
                   required
                 />
               </div>
@@ -211,7 +227,7 @@ const EditRecipe = () => {
                   name="category"
                   value={formData.category}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent"
                   required
                 >
                   <option value="breakfast">Breakfast</option>
@@ -230,7 +246,7 @@ const EditRecipe = () => {
                 value={formData.description}
                 onChange={handleInputChange}
                 rows="3"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent"
                 placeholder="Describe your recipe..."
                 required
               />
@@ -247,7 +263,7 @@ const EditRecipe = () => {
                   name="prepTime"
                   value={formData.prepTime}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent"
                   min="1"
                   required
                 />
@@ -262,7 +278,7 @@ const EditRecipe = () => {
                   name="cookTime"
                   value={formData.cookTime}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent"
                   min="1"
                   required
                 />
@@ -277,7 +293,7 @@ const EditRecipe = () => {
                   name="servings"
                   value={formData.servings}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent"
                   min="1"
                   required
                 />
@@ -293,7 +309,7 @@ const EditRecipe = () => {
                 name="totalPrice"
                 value={formData.totalPrice}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent"
                 min="0"
                 step="0.01"
                 required
@@ -336,7 +352,7 @@ const EditRecipe = () => {
                 <button
                   type="button"
                   onClick={addIngredient}
-                  className="flex items-center text-orange-600 hover:text-orange-700"
+                  className="flex items-center text-[#509343] hover:text-[#0B5A02]"
                 >
                   <FaPlus className="mr-1" />
                   Add Ingredient
@@ -351,7 +367,7 @@ const EditRecipe = () => {
                       placeholder="Ingredient name"
                       value={ingredient.name}
                       onChange={(e) => handleIngredientChange(index, "name", e.target.value)}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent"
                       required
                     />
                     <input
@@ -359,7 +375,7 @@ const EditRecipe = () => {
                       placeholder="Quantity"
                       value={ingredient.quantity}
                       onChange={(e) => handleIngredientChange(index, "quantity", e.target.value)}
-                      className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent"
                       min="0"
                       step="0.1"
                       required
@@ -369,7 +385,7 @@ const EditRecipe = () => {
                       placeholder="Unit"
                       value={ingredient.unit}
                       onChange={(e) => handleIngredientChange(index, "unit", e.target.value)}
-                      className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent"
                       required
                     />
                     {formData.ingredients.length > 1 && (
@@ -395,7 +411,7 @@ const EditRecipe = () => {
                 <button
                   type="button"
                   onClick={addStep}
-                  className="flex items-center text-orange-600 hover:text-orange-700"
+                  className="flex items-center text-[#509343] hover:text-[#0B5A02]"
                 >
                   <FaPlus className="mr-1" />
                   Add Step
@@ -405,14 +421,14 @@ const EditRecipe = () => {
               <div className="space-y-3">
                 {formData.steps.map((step, index) => (
                   <div key={index} className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-sm mt-2">
+                    <div className="flex-shrink-0 w-8 h-8 bg-[#509343] text-white rounded-full flex items-center justify-center font-bold text-sm mt-2">
                       {index + 1}
                     </div>
                     <textarea
                       placeholder={`Step ${index + 1}`}
                       value={step}
                       onChange={(e) => handleStepChange(index, e.target.value)}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent"
                       rows="2"
                       required
                     />
@@ -442,7 +458,7 @@ const EditRecipe = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-3 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white rounded-lg font-semibold transition-colors duration-200"
+                className="px-6 py-3 bg-[#509343] hover:bg-[#0B5A02] disabled:bg-gray-400 text-white rounded-lg font-semibold transition-colors duration-200"
               >
                 {isSubmitting ? "Updating Recipe..." : "Update Recipe"}
               </button>

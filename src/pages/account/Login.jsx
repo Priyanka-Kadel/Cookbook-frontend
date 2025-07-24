@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import Footer from "../../components/Footer"; // Ensure the path is correct
-import Navbar from "../../components/Navbar"; // Ensure the path is correct
+import Footer from "../../components/Footer"; 
+import Navbar from "../../components/Navbar";
 import loginIllustration from '../../assets/images/login.png';
 
 const Login = () => {

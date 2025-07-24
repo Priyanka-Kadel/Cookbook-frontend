@@ -45,10 +45,10 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate the form before submitting
+
     if (validateForm()) {
       try {
-        // Call the register API using axios with the new URL
+     
         const response = await axios.post(
           "http://localhost:3000/api/auth/register",
           formData

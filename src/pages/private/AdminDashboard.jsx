@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { FaUserPlus, FaUserEdit, FaTrashAlt, FaHome, FaUser, FaUsers, FaSignOutAlt, FaChartBar, FaUtensils } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "tailwindcss/tailwind.css";
 
 const AdminDashboard = () => {
@@ -8,6 +10,8 @@ const AdminDashboard = () => {
   const [recipes, setRecipes] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [recipeToDelete, setRecipeToDelete] = useState(null);
 
   // Helper function to get auth token
   const getAuthToken = () => {
@@ -135,26 +139,36 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteRecipe = async (recipeId) => {
-    if (window.confirm("Are you sure you want to delete this recipe?")) {
-      try {
-        const token = getAuthToken();
-        const response = await fetch(`http://localhost:3000/api/recipes/${recipeId}`, {
-          method: "DELETE",
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        if (response.ok) {
-          setRecipes(recipes.filter((recipe) => recipe._id !== recipeId));
-          alert("Recipe deleted successfully");
-        } else {
-          alert("Failed to delete recipe");
+    // Find the recipe to get its title for the confirmation message
+    const recipe = recipes.find(r => r._id === recipeId);
+    setRecipeToDelete(recipe);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeleteRecipe = async () => {
+    if (!recipeToDelete) return;
+    
+    try {
+      const token = getAuthToken();
+      const response = await fetch(`http://localhost:3000/api/recipes/${recipeToDelete._id}`, {
+        method: "DELETE",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      } catch (error) {
-        console.error("Error deleting recipe:", error);
-        alert("Failed to delete recipe");
+      });
+      if (response.ok) {
+        setRecipes(recipes.filter((recipe) => recipe._id !== recipeToDelete._id));
+        toast.success("Recipe deleted successfully");
+      } else {
+        toast.error("Failed to delete recipe");
       }
+    } catch (error) {
+      console.error("Error deleting recipe:", error);
+      toast.error("Failed to delete recipe");
+    } finally {
+      setShowDeleteConfirm(false);
+      setRecipeToDelete(null);
     }
   };
 
@@ -173,7 +187,7 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-100 via-white to-orange-50 flex items-center justify-center">
+              <div className="min-h-screen bg-gradient-to-br from-green-100 via-white to-green-50 flex items-center justify-center">
         <div className="bg-white rounded-2xl shadow-2xl p-8">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded mb-4"></div>
@@ -270,7 +284,7 @@ const AdminDashboard = () => {
               <div className="overflow-x-auto">
                 <table className="min-w-full border-collapse">
                   <thead>
-                    <tr className="bg-orange-50">
+                    <tr className="bg-green-50">
                       <th className="px-4 py-3 border border-gray-200 text-left font-semibold">Recipe Image</th>
                       <th className="px-4 py-3 border border-gray-200 text-left font-semibold">Title</th>
                       <th className="px-4 py-3 border border-gray-200 text-left font-semibold">Category</th>
@@ -344,7 +358,7 @@ const AdminDashboard = () => {
               <div className="overflow-x-auto">
                 <table className="min-w-full border-collapse">
                   <thead>
-                    <tr className="bg-orange-50">
+                    <tr className="bg-green-50">
                       <th className="px-4 py-3 border border-gray-200 text-left font-semibold">Name</th>
                       <th className="px-4 py-3 border border-gray-200 text-left font-semibold">Email</th>
                       <th className="px-4 py-3 border border-gray-200 text-left font-semibold">Role</th>
@@ -399,6 +413,37 @@ const AdminDashboard = () => {
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+          <div className="bg-white p-6 w-full max-w-sm rounded-xl shadow-xl flex flex-col">
+            <p className="mb-4 text-lg font-semibold text-gray-800">
+              Delete "{recipeToDelete?.title}"?
+            </p>
+            <p className="mb-6 text-sm text-gray-600">
+              This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setRecipeToDelete(null);
+                }}
+                className="bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-semibold shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteRecipe}
+                className="bg-[#509343] hover:bg-[#0B5A02] text-white px-4 py-2 rounded-lg font-semibold shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#509343] focus:ring-offset-2"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

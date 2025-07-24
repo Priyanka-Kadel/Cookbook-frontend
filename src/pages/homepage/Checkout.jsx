@@ -32,15 +32,9 @@ const Checkout = () => {
       const userObj = JSON.parse(storedUser);
       setUser(userObj);
       
-      // Get user's unique cart ID and load cart
-      const userCartId = localStorage.getItem(`cartId_${userObj.id}`);
-      if (!userCartId) {
-        alert("No cart found!");
-        navigate("/recipes");
-        return;
-      }
-      
-      const cart = JSON.parse(localStorage.getItem(userCartId) || "[]");
+      // Load user-specific cart using user ID (same pattern as Cart.jsx)
+      const userCartKey = `cart_${userObj.id}`;
+      const cart = JSON.parse(localStorage.getItem(userCartKey) || "[]");
       setCartItems(cart);
       
       if (cart.length === 0) {
@@ -156,10 +150,13 @@ const Checkout = () => {
       orders.push(order);
       localStorage.setItem("orders", JSON.stringify(orders));
 
-      // Clear cart
-      const userCartId = localStorage.getItem(`cartId_${user.id}`);
-      localStorage.removeItem(userCartId);
-      localStorage.removeItem(`cartId_${user.id}`); // Remove cartId from localStorage
+      // Clear cart (same pattern as Cart.jsx)
+      const userCartKey = `cart_${user.id}`;
+      localStorage.removeItem(userCartKey);
+      
+      // Update cart count in navbar
+      const event = new CustomEvent('cartUpdated', { detail: 0 });
+      window.dispatchEvent(event);
 
       // Redirect to success page
       navigate("/success", { 
@@ -180,7 +177,7 @@ const Checkout = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#509343]"></div>
       </div>
     );
   }
@@ -194,7 +191,7 @@ const Checkout = () => {
             <div className="flex items-center justify-between">
               <Link 
                 to="/cart" 
-                className="flex items-center text-orange-600 hover:text-orange-700 transition-colors"
+                className="flex items-center text-[#509343] hover:text-[#0B5A02] transition-colors"
               >
                 <FaArrowLeft className="mr-2" />
                 Back to Cart
@@ -209,7 +206,7 @@ const Checkout = () => {
               {/* Customer Information */}
               <div className="bg-white rounded-2xl shadow-lg p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                  <FaUser className="mr-2 text-orange-500" />
+                  <FaUser className="mr-2 text-[#509343]" />
                   Customer Information
                 </h2>
                 
@@ -223,7 +220,7 @@ const Checkout = () => {
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent ${
                         errors.firstName ? 'border-red-500' : 'border-gray-300'
                       }`}
                       placeholder="Enter your first name"
@@ -242,7 +239,7 @@ const Checkout = () => {
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent ${
                         errors.lastName ? 'border-red-500' : 'border-gray-300'
                       }`}
                       placeholder="Enter your last name"
@@ -261,7 +258,7 @@ const Checkout = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent ${
                         errors.email ? 'border-red-500' : 'border-gray-300'
                       }`}
                       placeholder="Enter your email address"
@@ -280,7 +277,7 @@ const Checkout = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent ${
                         errors.phone ? 'border-red-500' : 'border-gray-300'
                       }`}
                       placeholder="Enter 10-digit phone number"
@@ -296,7 +293,7 @@ const Checkout = () => {
               {/* Delivery Information */}
               <div className="bg-white rounded-2xl shadow-lg p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                  <FaMapMarkerAlt className="mr-2 text-orange-500" />
+                  <FaMapMarkerAlt className="mr-2 text-[#509343]" />
                   Delivery Information
                 </h2>
                 
@@ -310,7 +307,7 @@ const Checkout = () => {
                       name="address"
                       value={formData.address}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent ${
                         errors.address ? 'border-red-500' : 'border-gray-300'
                       }`}
                       placeholder="Enter your delivery address"
@@ -329,7 +326,7 @@ const Checkout = () => {
                       name="city"
                       value={formData.city}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#509343] focus:border-transparent ${
                         errors.city ? 'border-red-500' : 'border-gray-300'
                       }`}
                       placeholder="Enter your city"
@@ -344,7 +341,7 @@ const Checkout = () => {
               {/* Payment Method */}
               <div className="bg-white rounded-2xl shadow-lg p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                  <FaCreditCard className="mr-2 text-orange-500" />
+                  <FaCreditCard className="mr-2 text-[#509343]" />
                   Payment Method
                 </h2>
                 
@@ -356,7 +353,7 @@ const Checkout = () => {
                       value="cod"
                       checked={paymentMethod === "cod"}
                       onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="mr-3 text-orange-600 focus:ring-orange-500"
+                      className="mr-3 text-[#509343] focus:ring-[#509343]"
                     />
                     <div>
                       <div className="font-medium text-gray-900">Cash on Delivery</div>
@@ -371,7 +368,7 @@ const Checkout = () => {
                       value="esewa"
                       checked={paymentMethod === "esewa"}
                       onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="mr-3 text-orange-600 focus:ring-orange-500"
+                      className="mr-3 text-[#509343] focus:ring-[#509343]"
                     />
                     <div>
                       <div className="font-medium text-gray-900">eSewa</div>
@@ -429,7 +426,7 @@ const Checkout = () => {
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white py-3 px-6 rounded-xl font-semibold transition-colors duration-200 flex items-center justify-center"
+                  className="w-full bg-[#509343] hover:bg-[#0B5A02] disabled:bg-gray-400 text-white py-3 px-6 rounded-xl font-semibold transition-colors duration-200 flex items-center justify-center"
                 >
                   {isProcessing ? (
                     <>

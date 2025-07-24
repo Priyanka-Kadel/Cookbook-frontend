@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUpload, FaPlus, FaTrash } from "react-icons/fa";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddRecipes = () => {
   const navigate = useNavigate();
@@ -127,7 +129,7 @@ const AddRecipes = () => {
         
         // Check if user is admin
         if (userObj.role !== 'admin') {
-          alert("Access denied. Only admins can add recipes.");
+          toast.error("Access denied. Only admins can add recipes.");
           navigate("/");
           return;
         }
@@ -214,7 +216,7 @@ const AddRecipes = () => {
     
     // Check if user is admin
     if (!user || user.role !== 'admin') {
-      alert("Access denied. Only admins can add recipes.");
+      toast.error("Access denied. Only admins can add recipes.");
       return;
     }
 
@@ -224,15 +226,15 @@ const AddRecipes = () => {
       const token = getAuthToken();
       
       if (!token) {
-        alert("Authentication token not found. Please log in again.");
-      navigate("/login");
-      return;
-    }
+        toast.error("Authentication token not found. Please log in again.");
+        navigate("/login");
+        return;
+      }
 
       // Validate required fields
       if (!formData.title || !formData.description || !formData.prepTime || 
           !formData.cookTime || !formData.servings || !formData.totalPrice) {
-        alert("Please fill in all required fields");
+        toast.error("Please fill in all required fields");
         setIsSubmitting(false);
         return;
       }
@@ -243,7 +245,7 @@ const AddRecipes = () => {
       );
       
       if (validIngredients.length === 0) {
-        alert("Please add at least one ingredient");
+        toast.error("Please add at least one ingredient");
         setIsSubmitting(false);
         return;
       }
@@ -252,7 +254,7 @@ const AddRecipes = () => {
       const validSteps = formData.steps.filter(step => step.trim());
       
       if (validSteps.length === 0) {
-        alert("Please add at least one cooking step");
+        toast.error("Please add at least one cooking step");
         setIsSubmitting(false);
         return;
       }
@@ -304,15 +306,15 @@ const AddRecipes = () => {
       const result = await response.json();
 
       if (response.ok) {
-        alert("Recipe added successfully!");
-        navigate("/admin-dashboard");
+        toast.success("Recipe added successfully!");
+        navigate("/adminDash");
       } else {
         console.error("Server error:", result);
-        alert(result.message || "Failed to add recipe");
+        toast.error(result.message || "Failed to add recipe");
       }
     } catch (error) {
       console.error("Error adding recipe:", error);
-      alert("Error adding recipe. Please try again.");
+      toast.error("Error adding recipe. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

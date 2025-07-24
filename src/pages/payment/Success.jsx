@@ -35,7 +35,7 @@ const Success = () => {
         <img src={tickGif} alt="Success" className="w-32 h-32 mb-6" />
         <h2 className="text-3xl font-bold text-green-600 mb-2">Order Placed Successfully!</h2>
         <p className="text-gray-700 mb-6">Thank you for your order.</p>
-        <Link to="/" className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors duration-200">
+        <Link to="/" className="bg-[#509343] hover:bg-[#0B5A02] text-white px-6 py-3 rounded-xl font-semibold transition-colors duration-200">
           Go to Home
         </Link>
       </div>
@@ -47,8 +47,8 @@ const Success = () => {
       <img src={tickGif} alt="Success" className="w-32 h-32 mb-6" />
       <h2 className="text-3xl font-bold text-green-600 mb-2">Order Placed Successfully!</h2>
       <p className="text-gray-700 mb-4">Thank you for your order. Your delicious ingredients are on the way!</p>
-      <div className="bg-orange-50 border border-orange-200 rounded-xl p-6 w-full max-w-lg mb-6">
-        <h3 className="text-xl font-semibold text-orange-700 mb-4">Order Details</h3>
+              <div className="bg-green-50 border border-green-200 rounded-xl p-6 w-full max-w-lg mb-6">
+          <h3 className="text-xl font-semibold text-[#509343] mb-4">Order Details</h3>
         <div className="mb-2">
           <span className="font-medium text-gray-700">Order ID:</span> <span className="text-gray-900">{order.id}</span>
         </div>
@@ -80,7 +80,7 @@ const Success = () => {
         </div>
       </div>
       <p className="text-gray-500 mb-8">You will be redirected to the home page shortly.</p>
-      <Link to="/" className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors duration-200">
+              <Link to="/" className="bg-[#509343] hover:bg-[#0B5A02] text-white px-6 py-3 rounded-xl font-semibold transition-colors duration-200">
         Go to Home
       </Link>
     </div>

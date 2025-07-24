@@ -8,19 +8,14 @@ import Login from "./pages/account/Login";
 import Register from "./pages/account/Register";
 import ResetPassword from "./pages/account/resetPassword.jsx";
 import AboutUs from "./pages/homepage/AboutUs.jsx";
-import Address from "./pages/homepage/Address.jsx";
 import ContactUs from "./pages/homepage/ContactUs.jsx";
 import Dashboard from "./pages/homepage/Dashboard.jsx";
-import FAQ from "./pages/homepage/Faq.jsx";
 import RecipeDetails from "./pages/homepage/RecipeDetails.jsx";
-import TermsCondition from "./pages/homepage/TermsCondition.jsx";
-import UserListings from "./pages/private/UserListings.jsx";
 
 import Failure from "./pages/payment/Failure.jsx";
 import Success from "./pages/payment/Success.jsx";
 import AddRecipes from "./pages/private/AddRecipes.jsx";
 import AdminDashboard from "./pages/private/AdminDashboard.jsx";
-import AdminUpdate from "./pages/private/AdminUpdate.jsx";
 import EditUser from "./pages/private/EditUser.jsx";
 import Profile from "./pages/private/Profile.jsx";
 import UserProfile from "./pages/private/UserProfile.jsx";
@@ -58,13 +53,8 @@ function App() {
             <Route path="/adminDash" element={<AdminDashboard />} />
             <Route path="/aboutus" element={<AboutUs />} />
             <Route path="/contactus" element={<ContactUs />} />
-            <Route path="/termscondition" element={<TermsCondition />} />
-            <Route path="/address/:location" element={<Address />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/userListings" element={<UserListings />} />
             <Route path="/recipe-details/:id" element={<RecipeDetails />} />
             <Route path="/saved-recipes" element={<SavedRecipesPage />} />
-            <Route path="/adminUpdate/:id" element={<AdminUpdate />} />
             <Route path="/addRecipes" element={<AddRecipes />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/userprofile" element={<UserProfile />} />
